@@ -1,6 +1,9 @@
 <h2>Ubah Produk</h2>
 <!-- <?php
-		$ambil = $koneksi->query("SELECT * FROM produk WHERE id_produk='$_GET[id]'");
+		$stmt = $koneksi->prepare("SELECT * FROM produk WHERE id_produk=?");
+		$stmt->bind_param("s", $_GET['id']);
+		$stmt->execute();
+		$ambil = $stmt->get_result();
 		$pecah = $ambil->fetch_assoc();
 
 		echo "<pre>";
@@ -49,9 +52,13 @@ if (isset($_POST['ubah'])) {
 	if (!empty($lokasifoto)) {
 		move_uploaded_file($lokasifoto, "../foto_produk/$namafoto");
 
-		$koneksi->query("UPDATE produk SET nama_produk='$_POST[nama]',harga_produk='$_POST[harga]',berat_produk='$_POST[berat]',foto_produk='$namafoto',deskripsi_produk='$_POST[deskripsi]' WHERE id_produk='$_GET[id]'");
+		$stmt = $koneksi->prepare("UPDATE produk SET nama_produk=?, harga_produk=?, berat_produk=?, foto_produk=?, deskripsi_produk=? WHERE id_produk=?");
+		$stmt->bind_param("ssssss", $_POST['nama'], $_POST['harga'], $_POST['berat'], $namafoto, $_POST['deskripsi'], $_GET['id']);
+		$stmt->execute();
 	} else {
-		$koneksi->query("UPDATE produk SET nama_produk='$_POST[nama]',harga_produk='$_POST[harga]',berat_produk='$_POST[berat]',deskripsi_produk='$_POST[deskripsi]' WHERE id_produk='$_GET[id]'");
+		$stmt = $koneksi->prepare("UPDATE produk SET nama_produk=?, harga_produk=?, berat_produk=?, deskripsi_produk=? WHERE id_produk=?");
+		$stmt->bind_param("sssss", $_POST['nama'], $_POST['harga'], $_POST['berat'], $_POST['deskripsi'], $_GET['id']);
+		$stmt->execute();
 	}
 	echo "<script>alert('Data produk telah diubah');</script>";
 	echo "<script>location='index.php?halaman=produk';</script>";

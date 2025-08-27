@@ -2,7 +2,10 @@
 <?php $koneksi = new mysqli("localhost", "root", "", "ylnj-project"); ?>
 <!-- <?php
 		$id_produk = $_GET["id"];
-		$ambil = $koneksi->query("SELECT * FROM produk WHERE id_produk='$id_produk'");
+		$stmt = $koneksi->prepare("SELECT * FROM produk WHERE id_produk=?");
+		$stmt->bind_param("s", $id_produk);
+		$stmt->execute();
+		$ambil = $stmt->get_result();
 		$detail = $ambil->fetch_assoc();
 
 		echo "<pre>";

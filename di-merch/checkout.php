@@ -112,20 +112,23 @@ if (!isset($_SESSION["pelanggan"])) {
 				$tanggal_pembelian = date("Y-m-d");
 				$alamat_pengiriman = $_POST['alamat_pengiriman'];
 
-				$ambil = $koneksi->query("SELECT * FROM ongkir WHERE id_ongkir ='$id_ongkir'");
+				$stmt = $koneksi->prepare("SELECT * FROM ongkir WHERE id_ongkir = ?");
+				$stmt->bind_param("s", $id_ongkir);
+				$stmt->execute();
+				$ambil = $stmt->get_result();
 				$arrayongkir = $ambil->fetch_assoc();
 				$nama_kota = $arrayongkir['nama_kota'];
 				$tarif = $arrayongkir['tarif'];
 
 				$total_pembelian = $totalbelanja + $tarif;
 
-				$koneksi->query("INSERT INTO pembelian (
+				$stmt = $koneksi->prepare("INSERT INTO pembelian (
 					id_pelanggan, id_ongkir, tanggal_pembelian,
 					total_pembelian, nama_kota, tarif, alamat_pengiriman
-				) VALUES (
-					'$id_pelanggan', '$id_ongkir', '$tanggal_pembelian',
-					'$total_pembelian', '$nama_kota', '$tarif', '$alamat_pengiriman'
-				)");
+				) VALUES (?, ?, ?, ?, ?, ?, ?)");
+				$stmt->bind_param("sssssss", $id_pelanggan, $id_ongkir, $tanggal_pembelian,
+					$total_pembelian, $nama_kota, $tarif, $alamat_pengiriman);
+				$stmt->execute();
 
 				$id_pembelian_barusan = $koneksi->insert_id;
 
