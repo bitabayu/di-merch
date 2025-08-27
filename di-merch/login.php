@@ -47,7 +47,10 @@ if(isset($_POST["login"]))
 	$email = $_POST["email"];
 	$password = $_POST["password"];
 
-	$ambil = $koneksi->query("SELECT * FROM pelanggan WHERE email_pelanggan='$email' AND password_pelanggan='$password'");
+	$stmt = $koneksi->prepare("SELECT * FROM pelanggan WHERE email_pelanggan=? AND password_pelanggan=?");
+	$stmt->bind_param("ss", $email, $password);
+	$stmt->execute();
+	$ambil = $stmt->get_result();
 
 	$akunyangcocok = $ambil->num_rows;
 

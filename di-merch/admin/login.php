@@ -68,7 +68,10 @@ $koneksi = new mysqli("localhost", "root", "", "ylnj-project");
                         <?php
 
                         if (isset($_POST['login'])) {
-                            $ambil = $koneksi->query("SELECT * FROM admin WHERE username='$_POST[user]' AND password ='$_POST[pass]'");
+                            $stmt = $koneksi->prepare("SELECT * FROM admin WHERE username=? AND password=?");
+                            $stmt->bind_param("ss", $_POST['user'], $_POST['pass']);
+                            $stmt->execute();
+                            $ambil = $stmt->get_result();
                             $yangcocok = $ambil->num_rows;
                             if ($yangcocok == 1) {
                                 $_SESSION['admin'] = $ambil->fetch_assoc();

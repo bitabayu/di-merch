@@ -64,8 +64,11 @@
 							$alamat = $_POST["alamat"];
 							$telepon = $_POST["telepon"];
 
-							$ambil = $koneksi->query("SELECT * FROM pelanggan 
-								WHERE email_pelanggan='$email'");
+							$stmt = $koneksi->prepare("SELECT * FROM pelanggan 
+								WHERE email_pelanggan=?");
+							$stmt->bind_param("s", $email);
+							$stmt->execute();
+							$ambil = $stmt->get_result();
 							$yangcocok = $ambil->num_rows;
 							if ($yangcocok==1)
 							{
@@ -75,7 +78,9 @@
 							}
 							else
 							{
-								$koneksi->query("INSERT INTO pelanggan(email_pelanggan,password_pelanggan,nama_pelanggan,telepon_pelanggan,alamt_pelanggan) VALUES ('$email','$password','$nama','$telepon','$alamat') ");
+								$stmt = $koneksi->prepare("INSERT INTO pelanggan(email_pelanggan,password_pelanggan,nama_pelanggan,telepon_pelanggan,alamt_pelanggan) VALUES (?,?,?,?,?)");
+								$stmt->bind_param("sssss", $email, $password, $nama, $telepon, $alamat);
+								$stmt->execute();
 									echo "<script>alert('Pendaftaran sukses, silahkan login');</script>";
 									echo "<script>location = 'login.php';</script>"; 
 

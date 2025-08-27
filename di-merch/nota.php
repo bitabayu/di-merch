@@ -18,7 +18,10 @@ include 'koneksi.php';
 
 <h2>Detail Pembelian</h2>
 <?php 
-$ambil = $koneksi->query("SELECT * FROM pembelian JOIN pelanggan ON pembelian.id_pelanggan=pelanggan.id_pelanggan WHERE pembelian.id_pembelian='$_GET[id]'");
+$stmt = $koneksi->prepare("SELECT * FROM pembelian JOIN pelanggan ON pembelian.id_pelanggan=pelanggan.id_pelanggan WHERE pembelian.id_pembelian=?");
+$stmt->bind_param("s", $_GET['id']);
+$stmt->execute();
+$ambil = $stmt->get_result();
 $detail = $ambil->fetch_assoc();
  ?>
 
@@ -46,8 +49,11 @@ $detail = $ambil->fetch_assoc();
  	</thead>
  	<tbody>
  		<?php $nomor=1; ?>
- 		<?php $ambil=$koneksi->query("SELECT * FROM pembelian_produk JOIN produk ON pembelian_produk.id_produk
- 		WHERE pembelian_produk.id_pembelian='$_GET[id]'"); ?>
+ 		<?php 
+        $stmt = $koneksi->prepare("SELECT * FROM pembelian_produk JOIN produk ON pembelian_produk.id_produk WHERE pembelian_produk.id_pembelian=?");
+        $stmt->bind_param("s", $_GET['id']);
+        $stmt->execute();
+        $ambil = $stmt->get_result(); ?>
  		<?php while($pecah=$ambil->fetch_assoc()){ ?>
  		<tr>
  			<td><?php echo $nomor; ?></td>
